@@ -37,6 +37,12 @@ public class ImageService {
 
     }
 
-
-    
+    public boolean deleteImage(Long longId) {
+        ImageData image = this.repository.findById(longId).orElse(null);
+        if (image != null) {
+            this.repository.deleteById(longId);
+            return true;
+        }
+        return false;
+    }
 }
