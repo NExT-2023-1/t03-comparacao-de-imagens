@@ -1,1 +1,1 @@
-# t03-comparacao-de-imagens
+# t03-comparacao-de-imagens teste
