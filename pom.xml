@@ -14,7 +14,7 @@
 	<name>database</name>
 	<description>Treino de data base</description>
 	<properties>
-		<java.version>20</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 

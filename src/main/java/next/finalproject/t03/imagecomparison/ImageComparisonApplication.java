@@ -1,12 +1,12 @@
-package com.exemplo.imagem.database;
+package next.finalproject.t03.imagecomparison;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DatabaseApplication {
+public class ImageComparisonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DatabaseApplication.class, args);
+		SpringApplication.run(ImageComparisonApplication.class, args);
 	}
 }

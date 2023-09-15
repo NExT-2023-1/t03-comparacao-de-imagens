@@ -1,10 +1,10 @@
-package com.exemplo.imagem.database.repository;
+package next.finalproject.t03.imagecomparison.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.exemplo.imagem.database.entity.ImageData;
+import next.finalproject.t03.imagecomparison.entity.ImageData;
 
 public interface ImageDataRepository extends JpaRepository<ImageData, Long> {
 
