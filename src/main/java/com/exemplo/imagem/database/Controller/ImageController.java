@@ -30,13 +30,13 @@ public class ImageController {
 		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
 	}
 
-	@GetMapping("/{fileName}")
+	@GetMapping("/image/{fileName}")
 	public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 		byte[] imageData = service.downloadImages(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpeg")).body(imageData);
 	}   
 
-	@DeleteMapping("/{longId}")
+	@DeleteMapping("/image/{longId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
 		if (service.deleteImage(longId)) {
 			return new ResponseEntity<>(HttpStatus.OK);
