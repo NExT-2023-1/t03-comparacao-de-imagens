@@ -1,4 +1,4 @@
-package com.exemplo.imagem.database.entity;
+package next.finalproject.t03.imagecomparison.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,21 +13,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "ImageData")
+@Table(name = "image_data")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ImageData {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     private String name;
     private String type;
 
     @Lob
-    @Column(name = "imageDataByte", length = 1000)
+    @Column(name = "image_data_byte", length = 1000)
     private byte[] imageData;
-    
+
 }

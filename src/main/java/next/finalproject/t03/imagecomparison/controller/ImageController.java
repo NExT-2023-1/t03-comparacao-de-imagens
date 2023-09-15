@@ -1,4 +1,4 @@
-package com.exemplo.imagem.database.controller;
+package next.finalproject.t03.imagecomparison.controller;
 
 import java.io.IOException;
 
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.exemplo.imagem.database.service.ImageService;
+import next.finalproject.t03.imagecomparison.service.ImageService;
 
 @RestController
 @RequestMapping("/image")
 public class ImageController {
 
-    @Autowired
+	@Autowired
 	private ImageService service;
 
 	@PostMapping
@@ -30,18 +30,18 @@ public class ImageController {
 		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
 	}
 
-	@GetMapping("/image/{fileName}")
+	@GetMapping("/{fileName}")
 	public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 		byte[] imageData = service.downloadImages(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpeg")).body(imageData);
-	}   
+	}
 
-	@DeleteMapping("/image/{longId}")
+	@DeleteMapping("/{longId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
 		if (service.deleteImage(longId)) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-    
+
 }
