@@ -38,7 +38,7 @@ public class ImageService {
             }
 
         } else {
-            return "A imagem com o nome" + file.getOriginalFilename() + " ja existe no banco de dados.";
+            return "A imagem com o nome " + file.getOriginalFilename() + " ja existe no banco de dados.";
         }
     }
 
