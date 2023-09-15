@@ -1,4 +1,4 @@
-package com.exemplo.imagem.database.Controller;
+package com.exemplo.imagem.database.controller;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,11 +30,18 @@ public class ImageController {
 		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
 	}
 
-	@GetMapping("/{fileName}")
+	@GetMapping("/image/{fileName}")
 	public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 		byte[] imageData = service.downloadImages(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpeg")).body(imageData);
-
 	}   
+
+	@DeleteMapping("/image/{longId}")
+	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
+		if (service.deleteImage(longId)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
     
 }
