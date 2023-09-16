@@ -1,5 +1,6 @@
 package next.finalproject.t03.imagecomparison.entity;
 
+import dev.brachtendorf.jimagehash.hash.Hash;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,5 +30,8 @@ public class ImageData {
     @Lob
     @Column(name = "image_data_byte", length = 1000)
     private byte[] imageData;
+
+    @Column(length = 1000)
+    private Hash imageHash;
 
 }

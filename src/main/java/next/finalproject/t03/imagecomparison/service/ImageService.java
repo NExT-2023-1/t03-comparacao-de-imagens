@@ -1,12 +1,16 @@
 package next.finalproject.t03.imagecomparison.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
+import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import next.finalproject.t03.imagecomparison.entity.ImageData;
 import next.finalproject.t03.imagecomparison.repository.ImageDataRepository;
 import next.finalproject.t03.imagecomparison.util.ImageUtils;
@@ -21,6 +25,7 @@ public class ImageService {
 
        //verificando se ja existe imagem no banco de dados com o nome passado como parametro no request
         Optional<ImageData> imagemNoBanco = repository.findByName(file.getOriginalFilename());
+        HashingAlgorithm hasher = new PerceptiveHash(32);
 
         //caso nenhuma imagem com o nome passado exista, vamos inserir
         if (!imagemNoBanco.isPresent()) {
@@ -29,7 +34,8 @@ public class ImageService {
             ImageData imageData = repository.save(ImageData.builder()
                     .name(file.getOriginalFilename())
                     .type(file.getContentType())
-                    .imageData(ImageUtils.compressImage(file.getBytes())).build());
+                    .imageData(ImageUtils.compressImage(file.getBytes()))
+                    .imageHash(hasher.hash(convertMultiPartToFile(file))).build());
 
             if (imageData != null) {
                 return "ARQUIVO CARREGADO COM SUCESSO! " + file.getOriginalFilename();
@@ -57,4 +63,17 @@ public class ImageService {
         }
         return false;
     }
-}
+
+    public List <ImageData> findAll(){
+        return repository.findAll();
+    }
+    
+    public File convertMultiPartToFile(MultipartFile file ) throws IOException {
+        File convFile = new File( file.getOriginalFilename() );
+        FileOutputStream fos = new FileOutputStream( convFile );
+        fos.write( file.getBytes() );
+        fos.close();
+        return convFile;
+    }    
+    
+} 
