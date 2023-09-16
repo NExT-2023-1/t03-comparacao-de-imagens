@@ -25,6 +25,10 @@ public class TesteDeImagem {
 		Hash hash0 = hasher.hash(img0);
 		Hash hash1 = hasher.hash(img1);
 
+		System.out.println(hash0);
+		System.out.println(hash1);
+
+
 		System.out.println("Fez o hash! ");
 
 		double similarityScore = hash0.normalizedHammingDistance(hash1);
