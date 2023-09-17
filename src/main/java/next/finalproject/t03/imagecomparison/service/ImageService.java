@@ -23,19 +23,15 @@ public class ImageService {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
-       //verificando se ja existe imagem no banco de dados com o nome passado como parametro no request
+        // verificando se ja existe imagem no banco de dados com o nome passado como
+        // parametro no request
         Optional<ImageData> imagemNoBanco = repository.findByName(file.getOriginalFilename());
-        HashingAlgorithm hasher = new PerceptiveHash(32);
 
-        //caso nenhuma imagem com o nome passado exista, vamos inserir
+        // caso nenhuma imagem com o nome passado exista, vamos inserir
         if (!imagemNoBanco.isPresent()) {
 
-            //monta o objeto ImageDate e insere no banco de dados
-            ImageData imageData = repository.save(ImageData.builder()
-                    .name(file.getOriginalFilename())
-                    .type(file.getContentType())
-                    .imageData(ImageUtils.compressImage(file.getBytes()))
-                    .imageHash(hasher.hash(convertMultiPartToFile(file))).build());
+            // monta o objeto ImageDate e insere no banco de dados
+            ImageData imageData = repository.save(criaObjetoImagemBancoDados(file));
 
             if (imageData != null) {
                 return "ARQUIVO CARREGADO COM SUCESSO! " + file.getOriginalFilename();
@@ -64,16 +60,27 @@ public class ImageService {
         return false;
     }
 
-    public List <ImageData> findAll(){
+    private ImageData criaObjetoImagemBancoDados(MultipartFile file) throws IOException {
+
+        HashingAlgorithm hasher = new PerceptiveHash(32);
+
+        return ImageData.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .imageData(ImageUtils.compressImage(file.getBytes()))
+                .imageHash(hasher.hash(convertMultiPartToFile(file))).build();
+    }
+
+    public List<ImageData> findAll() {
         return repository.findAll();
     }
-    
-    public File convertMultiPartToFile(MultipartFile file ) throws IOException {
-        File convFile = new File( file.getOriginalFilename() );
-        FileOutputStream fos = new FileOutputStream( convFile );
-        fos.write( file.getBytes() );
+
+    public File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
         fos.close();
         return convFile;
-    }    
-    
-} 
+    }
+
+}
