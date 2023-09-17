@@ -44,4 +44,22 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
+	@PostMapping("/compareAll")
+	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
+
+		try {
+			byte[] imageData = service.getMostSimilarImage(file);
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.contentType(MediaType.valueOf("image/jpeg"))
+					.body(imageData);
+		} catch (IOException ex) {
+
+			System.out.println("Erro de entrada e saida nos arquivos");
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+		}
+
+	}
+
 }

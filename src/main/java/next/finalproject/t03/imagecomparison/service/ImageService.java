@@ -3,12 +3,16 @@ package next.finalproject.t03.imagecomparison.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import dev.brachtendorf.jimagehash.hash.Hash;
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import next.finalproject.t03.imagecomparison.entity.ImageData;
@@ -58,6 +62,46 @@ public class ImageService {
             return true;
         }
         return false;
+    }
+
+    public byte[] getMostSimilarImage(MultipartFile file) throws IOException {
+
+        //Recupera todas as imagens do banco de dados
+        List<ImageData> todasAsImagens = this.findAll();
+
+        //Cria objeto ImageData da imagem recebida na requisicao
+        ImageData imagemParaComparar = criaObjetoImagemBancoDados(file);
+
+        //Recupera o hash da imagem recebida na requisicao
+        Hash hashParaComparar = imagemParaComparar.getImageHash();
+
+        //variavel com o valor maximo de similaridade dos hashs
+        double menorSimilaridade = 1;
+        //variavel que vai guardar a imagem mais similar
+        ImageData imagemMaisSimilar = new ImageData();
+
+        // percorrendo a lista e comparando as imagens
+        for (ImageData imagemAtualDaLista : todasAsImagens) {
+
+            //recupera o Hash da imagem atual da lista
+            Hash currentHash = imagemAtualDaLista.getImageHash();
+
+            //calcula a simularidade entre a imagem atual e a imagem recebida na requisição
+            double similaridadeAtual = hashParaComparar.normalizedHammingDistance(currentHash);
+
+            //verifica se a imagem atual é mais simular do que a referencia anterior
+            //caso veridadeiro, atualiza a referencia da imagem mais parecida
+            // e atualiza o menor valor de similaridade(quanto menor mais parecido)
+            if (similaridadeAtual < menorSimilaridade) {
+
+                menorSimilaridade = similaridadeAtual;
+                imagemMaisSimilar = imagemAtualDaLista;
+            }
+
+        }
+
+        //retorna os dados da imagem mais similar decomprimido
+        return ImageUtils.decompressImage(imagemMaisSimilar.getImageData());
     }
 
     private ImageData criaObjetoImagemBancoDados(MultipartFile file) throws IOException {

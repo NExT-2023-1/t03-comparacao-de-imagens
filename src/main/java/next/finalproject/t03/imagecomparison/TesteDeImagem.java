@@ -15,8 +15,8 @@ public class TesteDeImagem {
 
 	public static void main(String[] args) throws IOException {
 		
-		File img0 = new File("C:/Users/SuperUsuário/Pictures/Vitor_Cavalcanti.png");
-		File img1 = new File("C:/Users/SuperUsuário/Pictures/teste1.png");
+		File img0 = new File("C:/Users/Nahyara Batista/Pictures/Backlog.png");
+		File img1 = new File("C:/Users/Nahyara Batista/Pictures/Backlog1.png");
 
 		System.out.println("Carregou o arquivo");
 
@@ -27,12 +27,13 @@ public class TesteDeImagem {
 
 		System.out.println(hash0);
 		System.out.println(hash1);
-
+    
 
 		System.out.println("Fez o hash! ");
 
 		double similarityScore = hash0.normalizedHammingDistance(hash1);
 
+		System.out.println("Score de similaridade = " + similarityScore);
 		if(similarityScore < .2) {
 			System.out.println("É igual! ");
 		}
