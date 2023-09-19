@@ -1,0 +1,53 @@
+body {
+    background: #ffff url(Logo_CESAR.png);
+    background-size: 200%;
+    font: 15pt Arial;
+
+}
+ 
+header {
+    color: black;
+    text-align: center;
+}
+
+section {
+    background: rgba(255, 68, 0, 0.267);
+    border-radius: 15px;
+    padding: 80px;
+    width: 500px;
+    margin: auto;
+    text-align: center;
+    box-shadow: 3px 3px 10px rgba(0,0,0, 0.363);
+}
+
+footer {
+    color: white;
+    text-align: center;
+    font-style: italic;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.image-box {
+    margin: 10px;
+    text-align: center;
+}
+img {
+    max-width: 300px;
+    max-height: 300px;
+}
+#result {
+    font-weight: bold;
+}
+
+.logo {
+    margin-right: 20px; /* Espaçamento à direita da logo */
+}
+
+.logo img {
+    width: 100px; /* Defina a largura do logotipo conforme necessário */
+    height: auto; 
+}
