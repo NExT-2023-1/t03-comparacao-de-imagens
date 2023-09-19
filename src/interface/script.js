@@ -25,7 +25,7 @@ imageInput2.addEventListener('change', () => {
 
 function compareImages() {
     if (!image1Element.src || !image2Element.src) {
-        resultText.textContent = 'Carregue duas imagens para comparar.';
+        resultText.textContent = 'Carregue as duas imagens para comparar.';
         return;
     }
 
