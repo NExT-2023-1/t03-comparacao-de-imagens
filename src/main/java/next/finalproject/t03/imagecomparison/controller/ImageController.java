@@ -44,7 +44,7 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@PostMapping("/compareAll")
+	@PostMapping("/getMostSimilar)
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
 		try {
