@@ -3,12 +3,17 @@ body {
     background-size: 200%;
     font: 15pt Arial;
 
+    background-size: cover;
+    height: 100vh;
+   
+    font: 15pt Arial;
 }
  
 header {
     color: black;
     text-align: center;
 }
+
 
 section {
     background: rgba(255, 68, 0, 0.267);
@@ -20,11 +25,13 @@ section {
     box-shadow: 3px 3px 10px rgba(0,0,0, 0.363);
 }
 
+
 footer {
     color: white;
     text-align: center;
     font-style: italic;
 }
+
 
 .image-container {
     display: flex;
@@ -43,6 +50,7 @@ img {
     font-weight: bold;
 }
 
+
 .logo {
     margin-right: 20px; /* Espaçamento à direita da logo */
 }
@@ -51,3 +59,10 @@ img {
     width: 100px; /* Defina a largura do logotipo conforme necessário */
     height: auto; 
 }
+
+.logo img {
+    width: 100px; /* Defina a largura do logotipo conforme necessário */
+    height: auto;
+}
+
+

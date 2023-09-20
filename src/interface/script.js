@@ -3,6 +3,8 @@ const imageInput2 = document.getElementById('image-input2');
 const image1Element = document.getElementById('image1');
 const image2Element = document.getElementById('image2');
 const resultText = document.getElementById('result');
+const formData = new FormData();
+
 
 function loadImage(input, imageElement) {
     const file = input.files[0];
@@ -15,13 +17,16 @@ function loadImage(input, imageElement) {
     }
 }
 
+
 imageInput1.addEventListener('change', () => {
     loadImage(imageInput1, image1Element);
 });
 
+
 imageInput2.addEventListener('change', () => {
     loadImage(imageInput2, image2Element);
 });
+
 
 function compareImages() {
     if (!image1Element.src || !image2Element.src) {
@@ -29,9 +34,33 @@ function compareImages() {
         return;
     }
 
+
     if (image1Element.src === image2Element.src) {
         resultText.textContent = 'As duas imagens são iguais.';
     } else {
         resultText.textContent = 'As duas imagens são diferentes.';
+    }
+}
+
+
+async function handlePostImage(event) {
+    event.preventDefault()
+    formData.append("image", imageInput1.value)
+    try {
+        const data = await fetch("http://localhost:8080/image", {
+            method: "POST",
+            headers: {
+                'Access-Control-Allow-Origin': "http://127.0.0.1:5500/",
+            },
+            body: {
+                image: formData
+            }
+        })
+        const response = await data.json()
+
+        console.log(...formData)
+        console.log(response)
+    } catch (error) {
+        console.log("Erro", error)
     }
 }
