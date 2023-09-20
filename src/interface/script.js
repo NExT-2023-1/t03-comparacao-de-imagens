@@ -42,7 +42,8 @@ function compareImages() {
     }
 }
 
-
+// função para tentar fazer o post da imagem no backend *não está funcionando*
+// dizendo que o arquivo não é do tipo multipart
 async function handlePostImage(event) {
     event.preventDefault()
     formData.append("image", imageInput1.value)

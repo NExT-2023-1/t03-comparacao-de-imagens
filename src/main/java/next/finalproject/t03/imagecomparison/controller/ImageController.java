@@ -26,6 +26,8 @@ public class ImageController {
 	@Autowired
 	private ImageService service;
 
+	// consertando o erro de cors que a aplicação estava dando
+	// pelo que eu entendi o cors regular quem acessa o backend
 	@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false")
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
