@@ -28,10 +28,10 @@ public class ImageData {
     private String type;
 
     @Lob
-    @Column(name = "image_data_byte", length = 1000)
+    @Column(name = "image_data_byte", columnDefinition = "MEDIUMBLOB")
     private byte[] imageData;
 
-    @Column(length = 1000)
+    @Column(length = 10000)
     private Hash imageHash;
 
 }

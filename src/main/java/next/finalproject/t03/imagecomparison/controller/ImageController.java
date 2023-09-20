@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.service.ImageService;
 
 @RestController
@@ -44,15 +45,22 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@PostMapping("/getMostSimilar)
+	@PostMapping(value= "/getMostSimilar")
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
 		try {
-			byte[] imageData = service.getMostSimilarImage(file);
+			MostSimilarImageResponse imageData = service.getMostSimilarImage(file);
+
+			if(imageData.getImage() != null) {
 
 			return ResponseEntity.status(HttpStatus.OK)
 					.contentType(MediaType.valueOf("image/jpeg"))
-					.body(imageData);
+					.body(imageData.getImage());
+					
+			}else{
+				return ResponseEntity.status(HttpStatus.OK).body(imageData.getResponseMessage());
+			}
+
 		} catch (IOException ex) {
 
 			System.out.println("Erro de entrada e saida nos arquivos");
