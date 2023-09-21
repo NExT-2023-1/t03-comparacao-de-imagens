@@ -1,5 +1,7 @@
 package next.finalproject.t03.imagecomparison.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.brachtendorf.jimagehash.hash.Hash;
+import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
+import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
+import next.finalproject.t03.imagecomparison.entity.ImageData;
 import next.finalproject.t03.imagecomparison.service.ImageService;
+import next.finalproject.t03.imagecomparison.util.ImageUtils;
 
 @RestController
 @RequestMapping("/image")
@@ -69,5 +76,37 @@ public class ImageController {
 		}
 
 	}
+
+	@PostMapping(value= "/comapretwoimages")
+	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1, @RequestParam("image2") MultipartFile file2) throws IOException {
+
+		HashingAlgorithm hasher = new PerceptiveHash(32);		
+
+		File firsImage = convertMultiPartToFile(file1);
+		File secondImage = convertMultiPartToFile(file2);
+
+		Hash hash0 = hasher.hash(firsImage);
+		Hash hash1 = hasher.hash(secondImage);
+
+		double similarityScore = hash0.normalizedHammingDistance(hash1);
+
+		System.out.println("Score de similaridade = " + similarityScore);
+
+		if(similarityScore < .2) {
+			return ResponseEntity.status(HttpStatus.OK).body("É igual! ");
+		}
+		else{
+			return ResponseEntity.status(HttpStatus.OK).body("é diferente! ");
+		}
+	}
+
+	//Codigo repetido para poder rodar, não foi possivel importar o metodo de ImageService. Em analise!
+	public File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
 
 }
