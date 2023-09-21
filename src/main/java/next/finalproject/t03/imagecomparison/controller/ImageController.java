@@ -80,10 +80,12 @@ public class ImageController {
 	@PostMapping(value= "/comapretwoimages")
 	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1, @RequestParam("image2") MultipartFile file2) throws IOException {
 
+		
+		
 		HashingAlgorithm hasher = new PerceptiveHash(32);		
 
-		File firsImage = convertMultiPartToFile(file1);
-		File secondImage = convertMultiPartToFile(file2);
+		File firsImage = service.convertMultiPartToFile(file1);
+		File secondImage = service.convertMultiPartToFile(file2);
 
 		Hash hash0 = hasher.hash(firsImage);
 		Hash hash1 = hasher.hash(secondImage);
@@ -98,15 +100,5 @@ public class ImageController {
 		else{
 			return ResponseEntity.status(HttpStatus.OK).body("é diferente! ");
 		}
-	}
-
-	//Codigo repetido para poder rodar, não foi possivel importar o metodo de ImageService. Em analise!
-	public File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
-
+	}	
 }
