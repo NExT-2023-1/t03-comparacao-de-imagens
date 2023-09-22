@@ -73,4 +73,24 @@ async function handlePostImage(event) {
 }
 
 
+async function handleGetImage(image) {
+    try {
+        const data = await fetch(`http://localhost:8080/image/${image}`, {
+            method: "GET",
+            headers: {
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:5500/'
+            }
+        })
+
+        console.log(data)
+    } catch (error) {
+        console.log(error)        
+    }
+}
+
+window.onload = async () => {
+    await handleGetImage("nodejs_logo.png")
+}
+
+
 
