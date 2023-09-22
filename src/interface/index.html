@@ -23,8 +23,7 @@
             id="form"
             onsubmit="handlePostImage(event)"
             enctype="multipart/form-data"
-            method="POST"
-        >
+            method="POST">
             <p>
                 <input type="file" id="image-input1" accept="image/*" multiple>
             <div class="image-container">
@@ -34,18 +33,18 @@
                 </div>
             </div>
             </p>
-            <!-- comentado pois estou tentando fazer o upload de uma imagem só -->
-            <!-- <p>
-                <input type="file" id="image-input2" accept="image/*">
-            <div class="image-box">
-                <label>Imagem 2:</label>
+           
+             <p>
+                <input type="file" id="image-input2" accept="image/*" multiple>
+            <div class="image-container">
+                <div class="image-box">
+                <div>Imagem 2:</div>
                 <img id="image2">
             </div>
             </div></p>
        <p><button onclick="compareImages()">Comparar Imagens</button></p> 
             </div>
-            </p> -->
-            <p><button type="submit">Comparar Imagens</button></p>
+            </p> 
         </form>
         <p id="result"></p> 
     </section>

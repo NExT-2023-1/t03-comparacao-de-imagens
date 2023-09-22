@@ -21,9 +21,9 @@ imageInput1.addEventListener('change', () => {
     loadImage(imageInput1, image1Element);
 });
 
-/*imageInput2.addEventListener('change', () => {
+imageInput2.addEventListener('change', () => {
     loadImage(imageInput2, image2Element);
-});*/
+});
 
 function compareImages() {
     if (!image1Element.src || !image2Element.src) {
@@ -60,7 +60,7 @@ async function handlePostImage(event) {
             headers: {
                 'Access-Control-Allow-Origin': "http://127.0.0.1:5500/",
             }
-        });
+        })
 
         if (data.ok) {
             const response = await response.json();
