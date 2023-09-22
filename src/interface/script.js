@@ -1,9 +1,11 @@
+
 const imageInput1 = document.getElementById('image-input1');
 const imageInput2 = document.getElementById('image-input2');
 const image1Element = document.getElementById('image1');
 const image2Element = document.getElementById('image2');
 const resultText = document.getElementById('result');
 const formData = new FormData();
+
 
 
 function loadImage(input, imageElement) {
@@ -23,9 +25,9 @@ imageInput1.addEventListener('change', () => {
 });
 
 
-imageInput2.addEventListener('change', () => {
-    loadImage(imageInput2, image2Element);
-});
+// imageInput2.addEventListener('change', () => {
+//     loadImage(imageInput2, image2Element);
+// });
 
 
 function compareImages() {
@@ -46,7 +48,10 @@ function compareImages() {
 // dizendo que o arquivo não é do tipo multipart
 async function handlePostImage(event) {
     event.preventDefault()
-    formData.append("image", imageInput1.value)
+    for (const file of imageInput1.files) {
+        formData.append("image", file);
+    }
+
     try {
         const data = await fetch("http://localhost:8080/image", {
             method: "POST",
@@ -59,9 +64,13 @@ async function handlePostImage(event) {
         })
         const response = await data.json()
 
+
         console.log(...formData)
-        console.log(response)
+        console.log(data)
     } catch (error) {
         console.log("Erro", error)
     }
 }
+
+
+

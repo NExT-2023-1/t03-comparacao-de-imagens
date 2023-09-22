@@ -16,18 +16,7 @@
     </header>
     <div class="logo">
     <img src="Logo_CESAR.png" alt="Logo da Minha Empresa">
-    </div>
-    <section>
-        <p><input type="file" id="image-input1" accept="image/*">
-        <div class="image-container">
-            <div class="image-box">
-                <label>Imagem 1:</label>
-                <img id="image1">
-            </div> 
-        </div></p>
-        <p><input type="file" id="image-input2" accept="image/*">  
-        <img src="Logo_CESAR.png" alt="Logo da Minha Empresa">
-    </div>
+
     <section>
         <!-- adicionando formulário que define o tipo como multipart e metodo post -->
         <form
@@ -35,9 +24,10 @@
             onsubmit="handlePostImage(event)"
             enctype="multipart/form-data"
             method="post"
+            action="/image"
         >
             <p>
-                <input type="file" id="image-input1" accept="image/*" multiple>
+                <input type="file" id="image-input1" accept="image/*" name="image" multiple>
             <div class="image-container">
                 <div class="image-box">
                     <label>Imagem 1:</label>

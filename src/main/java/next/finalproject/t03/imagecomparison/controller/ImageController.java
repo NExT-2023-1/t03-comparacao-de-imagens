@@ -20,6 +20,7 @@ import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.service.ImageService;
 
 @RestController
+@CrossOrigin(origins = "*") 
 @RequestMapping("/image")
 public class ImageController {
 
@@ -28,21 +29,18 @@ public class ImageController {
 
 	// consertando o erro de cors que a aplicação estava dando
 	// pelo que eu entendi o cors regular quem acessa o backend
-	@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false")
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
 		String uploadImage = service.uploadImage(file);
 		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
 	}
 
-	@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false")
 	@GetMapping("/{fileName}")
 	public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 		byte[] imageData = service.downloadImages(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpeg")).body(imageData);
 	}
 
-	@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false")
 	@DeleteMapping("/{longId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
 		if (service.deleteImage(longId)) {
@@ -51,7 +49,6 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false")
 	@PostMapping(value= "/getMostSimilar")
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
