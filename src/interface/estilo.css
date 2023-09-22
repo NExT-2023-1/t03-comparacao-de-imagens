@@ -10,6 +10,14 @@ header {
     text-align: center;
 }
 
+input {
+    font-size: large;
+}
+
+button {
+    font-size: large;
+}
+
 section {
     background: rgba(255, 68, 0, 0.267);
     border-radius: 15px;
@@ -48,6 +56,6 @@ img {
 }
 
 .logo img {
-    width: 100px; /* Defina a largura do logotipo conforme necessário */
+    width: 100px; /* Adicionar largura do logotipo conforme necessário */
     height: auto; 
 }
