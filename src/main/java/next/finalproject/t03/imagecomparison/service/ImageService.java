@@ -105,7 +105,7 @@ public class ImageService {
         // criando uma instancia do objeto de resposta
         MostSimilarImageResponse response = new MostSimilarImageResponse();
 
-        if (menorValorSimilaridade < 0.2) {
+        if (menorValorSimilaridade < 0.4) {
 
             byte[] mostSimilarImageDataByte = imagemMaisSimilar.getImageData();
             byte[] mostSimilarImageDataByteCompressed = ImageUtils.decompressImage(mostSimilarImageDataByte);
@@ -119,7 +119,7 @@ public class ImageService {
             response.setResponseMessage(
                     "Não existe imagem similar neste banco de dados! A imagem inserida possui valor de similaridade igual a "
                             + df.format(menorValorSimilaridade) +
-                            ". Para ser considerada similar, a imagem precisa ter o valor de similaridade menor que 0.20");
+                            ". Para ser considerada similar, a imagem precisa ter o valor de similaridade menor que 0.40");
         }
 
         return response;
@@ -146,6 +146,13 @@ public class ImageService {
         fos.write(file.getBytes());
         fos.close();
         return convFile;
+    }
+
+    public boolean isValidImageFile(MultipartFile file) {
+        String extension = file.getOriginalFilename();
+        String extensionSub = extension.substring(extension.lastIndexOf(".") + 1);
+        return "jpeg".equalsIgnoreCase(extensionSub) || "jpg".equalsIgnoreCase(extensionSub);
+
     }
 
 }
