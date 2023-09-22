@@ -28,13 +28,13 @@ public class ImageService {
 
         // verificando se ja existe imagem no banco de dados com o nome passado como
         // parametro no request
-        Optional<ImageData> imagemNoBanco = repository.findByName(file.getOriginalFilename());
+        Optional<ImageData> existingImage = repository.findByName(file.getOriginalFilename());
 
         // caso nenhuma imagem com o nome passado exista, vamos inserir
-        if (!imagemNoBanco.isPresent()) {
+        if (!existingImage.isPresent()) {
 
             // monta o objeto ImageDate e insere no banco de dados
-            ImageData imageData = repository.save(criaObjetoImagemBancoDados(file));
+            ImageData imageData = repository.save(createObjectImageDatabase(file));
 
             if (imageData != null) {
                 return "ARQUIVO CARREGADO COM SUCESSO! " + file.getOriginalFilename();
@@ -66,48 +66,50 @@ public class ImageService {
     public MostSimilarImageResponse getMostSimilarImage(MultipartFile file) throws IOException {
 
         // Recupera todas as imagens do banco de dados
-        List<ImageData> todasAsImagens = this.findAll();
+        List<ImageData> allImagesDatabase = this.findAll();
 
         // Cria objeto ImageData da imagem recebida na requisicao
-        ImageData imagemParaComparar = criaObjetoImagemBancoDados(file);
+        ImageData imageToCompare = createObjectImageDatabase(file);
 
         // Recupera o hash da imagem recebida na requisicao
-        Hash hashParaComparar = imagemParaComparar.getImageHash();
+        Hash hashToCompare = imageToCompare.getImageHash();
 
         // variavel com o valor maximo de similaridade dos hashs
-        double menorValorSimilaridade = 1;
+        double lowSimilarityScore = 1;
+        
         // classe formata o valor de similaridade
         java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
-        // df.format(menorValorSimilaridade);
+        // df.format(lowSimilarityScore);
 
         // variavel que vai guardar a imagem mais similar
-        ImageData imagemMaisSimilar = new ImageData();
+        ImageData mostSimilarImage = new ImageData();
 
         // percorrendo a lista e comparando as imagens
-        for (ImageData imagemAtualDaLista : todasAsImagens) {
+        for (ImageData currentImageFromList : allImagesDatabase) {
 
             // recupera o Hash da imagem atual da lista
-            Hash currentHash = imagemAtualDaLista.getImageHash();
+            Hash currentImageHash = currentImageFromList.getImageHash();
 
             // calcula a simularidade entre a imagem atual e a imagem recebida na requisição
-            double similaridadeAtual = hashParaComparar.normalizedHammingDistance(currentHash);
+            double currentSimilarityScore = hashToCompare.normalizedHammingDistance(currentImageHash);
 
             // verifica se a imagem atual é mais simular do que a referencia anterior
             // caso veridadeiro, atualiza a referencia da imagem mais parecida
             // e atualiza o menor valor de similaridade(quanto menor mais parecido)
-            if (similaridadeAtual < menorValorSimilaridade) {
+            if (currentSimilarityScore < lowSimilarityScore) {
 
-                menorValorSimilaridade = similaridadeAtual;
-                imagemMaisSimilar = imagemAtualDaLista;
+                lowSimilarityScore = currentSimilarityScore;
+                mostSimilarImage = currentImageFromList;
             }
         }
 
         // criando uma instancia do objeto de resposta
         MostSimilarImageResponse response = new MostSimilarImageResponse();
 
-        if (menorValorSimilaridade < 0.4) {
+        // quanto mais próximo de 0, maior o valor de similaridade
+        if (lowSimilarityScore < 0.4) {
 
-            byte[] mostSimilarImageDataByte = imagemMaisSimilar.getImageData();
+            byte[] mostSimilarImageDataByte = mostSimilarImage.getImageData();
             byte[] mostSimilarImageDataByteCompressed = ImageUtils.decompressImage(mostSimilarImageDataByte);
 
             response.setImage(mostSimilarImageDataByteCompressed);
@@ -117,15 +119,15 @@ public class ImageService {
         else {
             response.setImage(null);
             response.setResponseMessage(
-                    "Não existe imagem similar neste banco de dados! A imagem inserida possui valor de similaridade igual a "
-                            + df.format(menorValorSimilaridade) +
-                            ". Para ser considerada similar, a imagem precisa ter o valor de similaridade menor que 0.40");
+                    "Não existe imagem similar neste banco de dados! A imagem inserida possui score de similaridade igual a "
+                            + df.format(lowSimilarityScore) +
+                            ". Para ser considerada similar, a imagem precisa ter o score de similaridade menor que 0.40");
         }
 
         return response;
     }
 
-    private ImageData criaObjetoImagemBancoDados(MultipartFile file) throws IOException {
+    private ImageData createObjectImageDatabase(MultipartFile file) throws IOException {
 
         HashingAlgorithm hasher = new PerceptiveHash(32);
 
