@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +7,6 @@
     <title>t03-comparacao-de-imagens</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
-
 
 <body>
     <header>
@@ -21,37 +19,33 @@
         <!-- adicionando formulário que define o tipo como multipart e metodo post -->
         <form
             id="form"
-            onsubmit="handlePostImage(event)"
             enctype="multipart/form-data"
-            method="post"
-            action="/image"
-        >
+            method="POST">
             <p>
-                <input type="file" id="image-input1" accept="image/*" name="image" multiple>
+                <input type="file" id="image-input1" accept="image/*" multiple>
             <div class="image-container">
                 <div class="image-box">
-                    <label>Imagem 1:</label>
+                    <div>Imagem 1:</div>
                     <img id="image1">
                 </div>
             </div>
             </p>
-            <!-- comentado pois estou tentando fazer o upload de uma imagem só -->
-            <!-- <p>
-                <input type="file" id="image-input2" accept="image/*">
-            <div class="image-box">
-                <label>Imagem 2:</label>
+           
+             <p>
+                <input type="file" id="image-input2" accept="image/*" multiple>
+            <div class="image-container">
+                <div class="image-box">
+                <div>Imagem 2:</div>
                 <img id="image2">
             </div>
             </div></p>
-       <p><button onclick="compareImages()">Comparar Imagens</button></p> 
+       <p><button id="submit_button">Comparar Imagens</button></p> 
             </div>
-            </p> -->
-            <p><button type="submit">Comparar Imagens</button></p>
+            </p> 
         </form>
-        <p id="result"></p>
+        <p id="result"></p> 
     </section>
     <script src="script.js"></script>
 </body>
-
 
 </html>

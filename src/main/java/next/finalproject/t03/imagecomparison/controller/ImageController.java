@@ -1,6 +1,9 @@
 package next.finalproject.t03.imagecomparison.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import dev.brachtendorf.jimagehash.hash.Hash;
+import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
+import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.service.ImageService;
 
@@ -31,8 +37,13 @@ public class ImageController {
 	// pelo que eu entendi o cors regular quem acessa o backend
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-		String uploadImage = service.uploadImage(file);
-		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
+		if (service.isValidImageFile(file)) {
+			String uploadImage = service.uploadImage(file);
+			return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
+		}
+
 	}
 
 	@GetMapping("/{fileName}")
@@ -49,29 +60,72 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@PostMapping(value= "/getMostSimilar")
+	@PostMapping("/getMostSimilar")
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
-		try {
-			MostSimilarImageResponse imageData = service.getMostSimilarImage(file);
+		if (service.isValidImageFile(file)) {
 
-			if(imageData.getImage() != null) {
+			try {
+				MostSimilarImageResponse imageData = service.getMostSimilarImage(file);
 
-			return ResponseEntity.status(HttpStatus.OK)
-					.contentType(MediaType.valueOf("image/jpeg"))
-					.body(imageData.getImage());
-					
-			}else{
-				return ResponseEntity.status(HttpStatus.OK).body(imageData.getResponseMessage());
+				if (imageData.getImage() != null) {
+
+					return ResponseEntity.status(HttpStatus.OK)
+							.contentType(MediaType.valueOf("image/jpeg"))
+							.body(imageData.getImage());
+
+				} else {
+					return ResponseEntity.status(HttpStatus.OK).body(imageData.getResponseMessage());
+				}
+
+			} catch (IOException ex) {
+
+				System.out.println("Erro de entrada e saida nos arquivos");
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
 			}
 
-		} catch (IOException ex) {
-
-			System.out.println("Erro de entrada e saida nos arquivos");
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
 		}
 
 	}
 
+	@PostMapping("/comapretwoimages")
+	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1,
+			@RequestParam("image2") MultipartFile file2) throws IOException {
+		
+		Map<String, String> data = new HashMap<>();
+
+		if (service.isValidImageFile(file1) && service.isValidImageFile(file2)) {
+
+			HashingAlgorithm hasher = new PerceptiveHash(32);
+			// classe formata o valor de similaridade
+			java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
+
+			File firsImage = service.convertMultiPartToFile(file1);
+			File secondImage = service.convertMultiPartToFile(file2);
+
+			Hash hash0 = hasher.hash(firsImage);
+			Hash hash1 = hasher.hash(secondImage);
+
+			double similarityScore = hash0.normalizedHammingDistance(hash1);
+
+			if (similarityScore == 0) {
+				data.put("score", "São iguais! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+			} else if (similarityScore < .4) {
+				data.put("score", "São similares! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+
+			} else {
+				data.put("score", "São diferentes! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+
+			}
+
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
+		}
+	}
 }
