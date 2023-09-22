@@ -1,35 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>t03-comparacao-de-imagens</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
+
+
 <body>
     <header>
         <h1>Comparador de imagens</h1>
     </header>
     <div class="logo">
-    <img src="Logo_CESAR.png" alt="Logo da Minha Empresa">
+    <img src="Logo_CESAR.png" alt="Logo do Cesar">
     </div>
     <section>
-        <p><input type="file" id="image-input1" accept="image/*">
-        <div class="image-container">
-            <div class="image-box">
-                <label>Imagem 1:</label>
-                <img id="image1">
-            </div> 
-        </div></p>
-        <p><input type="file" id="image-input2" accept="image/*">  
+        <!-- adicionando formulário que define o tipo como multipart e metodo post -->
+        <form
+            id="form"
+            onsubmit="handlePostImage(event)"
+            enctype="multipart/form-data"
+            method="POST"
+        >
+            <p>
+                <input type="file" id="image-input1" accept="image/*" multiple>
+            <div class="image-container">
+                <div class="image-box">
+                    <div>Imagem 1:</div>
+                    <img id="image1">
+                </div>
+            </div>
+            </p>
+            <!-- comentado pois estou tentando fazer o upload de uma imagem só -->
+            <!-- <p>
+                <input type="file" id="image-input2" accept="image/*">
             <div class="image-box">
                 <label>Imagem 2:</label>
                 <img id="image2">
             </div>
             </div></p>
        <p><button onclick="compareImages()">Comparar Imagens</button></p> 
-        <p id="result"></p>
+            </div>
+            </p> -->
+            <p><button type="submit">Comparar Imagens</button></p>
+        </form>
+        <p id="result"></p> 
     </section>
     <script src="script.js"></script>
 </body>
+
+
 </html>
