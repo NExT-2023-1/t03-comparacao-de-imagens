@@ -1,7 +1,6 @@
 package next.finalproject.t03.imagecomparison.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,7 @@ import dev.brachtendorf.jimagehash.hash.Hash;
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
-import next.finalproject.t03.imagecomparison.entity.ImageData;
 import next.finalproject.t03.imagecomparison.service.ImageService;
-import next.finalproject.t03.imagecomparison.util.ImageUtils;
 
 @RestController
 @RequestMapping("/image")
@@ -34,8 +31,13 @@ public class ImageController {
 
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-		String uploadImage = service.uploadImage(file);
-		return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
+		if (service.isValidImageFile(file)) {
+			String uploadImage = service.uploadImage(file);
+			return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
+		}
+
 	}
 
 	@GetMapping("/{fileName}")
@@ -52,53 +54,65 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
-	@PostMapping(value= "/getMostSimilar")
+	@PostMapping("/getMostSimilar")
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
-		try {
-			MostSimilarImageResponse imageData = service.getMostSimilarImage(file);
+		if (service.isValidImageFile(file)) {
 
-			if(imageData.getImage() != null) {
+			try {
+				MostSimilarImageResponse imageData = service.getMostSimilarImage(file);
 
-			return ResponseEntity.status(HttpStatus.OK)
-					.contentType(MediaType.valueOf("image/jpeg"))
-					.body(imageData.getImage());
-					
-			}else{
-				return ResponseEntity.status(HttpStatus.OK).body(imageData.getResponseMessage());
+				if (imageData.getImage() != null) {
+
+					return ResponseEntity.status(HttpStatus.OK)
+							.contentType(MediaType.valueOf("image/jpeg"))
+							.body(imageData.getImage());
+
+				} else {
+					return ResponseEntity.status(HttpStatus.OK).body(imageData.getResponseMessage());
+				}
+
+			} catch (IOException ex) {
+
+				System.out.println("Erro de entrada e saida nos arquivos");
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
 			}
 
-		} catch (IOException ex) {
-
-			System.out.println("Erro de entrada e saida nos arquivos");
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
 		}
 
 	}
 
-	@PostMapping(value= "/comapretwoimages")
-	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1, @RequestParam("image2") MultipartFile file2) throws IOException {
+	@PostMapping("/comapretwoimages")
+	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1,
+			@RequestParam("image2") MultipartFile file2) throws IOException {
 
-		
-		
-		HashingAlgorithm hasher = new PerceptiveHash(32);		
+		if (service.isValidImageFile(file1) && service.isValidImageFile(file2)) {
 
-		File firsImage = service.convertMultiPartToFile(file1);
-		File secondImage = service.convertMultiPartToFile(file2);
+			HashingAlgorithm hasher = new PerceptiveHash(32);
+			// classe formata o valor de similaridade
+			java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
 
-		Hash hash0 = hasher.hash(firsImage);
-		Hash hash1 = hasher.hash(secondImage);
+			File firsImage = service.convertMultiPartToFile(file1);
+			File secondImage = service.convertMultiPartToFile(file2);
 
-		double similarityScore = hash0.normalizedHammingDistance(hash1);
+			Hash hash0 = hasher.hash(firsImage);
+			Hash hash1 = hasher.hash(secondImage);
 
-		System.out.println("Score de similaridade = " + similarityScore);
+			double similarityScore = hash0.normalizedHammingDistance(hash1);
 
-		if(similarityScore < .2) {
-			return ResponseEntity.status(HttpStatus.OK).body("É igual! ");
+			if (similarityScore < .4) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body("São similares! " + "Score de similaridade = " + df.format(similarityScore));
+			} else {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body("São diferentes! " + "Score de similaridade = " + df.format(similarityScore));
+			}
+
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
 		}
-		else{
-			return ResponseEntity.status(HttpStatus.OK).body("é diferente! ");
-		}
-	}	
+	}
 }
