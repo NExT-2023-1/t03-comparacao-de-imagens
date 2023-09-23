@@ -32,9 +32,10 @@ public class ImageController {
 
 	@Autowired
 	private ImageService service;
-
 	// consertando o erro de cors que a aplicação estava dando
 	// pelo que eu entendi o cors regular quem acessa o backend
+  
+	// inserir imagem no banco de dados
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
 		if (service.isValidImageFile(file)) {
@@ -46,12 +47,14 @@ public class ImageController {
 
 	}
 
+	// buscar imagem existente no banco de dados
 	@GetMapping("/{fileName}")
 	public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
 		byte[] imageData = service.downloadImages(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpeg")).body(imageData);
 	}
 
+	// deletar imagem do banco de dados
 	@DeleteMapping("/{longId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
 		if (service.deleteImage(longId)) {
@@ -60,6 +63,7 @@ public class ImageController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
+	// inserir imagem para comparar com as imagens salvas no banco de dados
 	@PostMapping("/getMostSimilar")
 	public ResponseEntity<?> getMostSimilarImage(@RequestParam("image") MultipartFile file) {
 
@@ -91,7 +95,8 @@ public class ImageController {
 
 	}
 
-	@PostMapping("/comapretwoimages")
+	// inserir duas imagem para comparar sem salvar no banco de dados
+	@PostMapping("/compareTwoImages")
 	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1,
 			@RequestParam("image2") MultipartFile file2) throws IOException {
 		
