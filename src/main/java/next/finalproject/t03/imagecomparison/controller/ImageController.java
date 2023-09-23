@@ -2,11 +2,14 @@ package next.finalproject.t03.imagecomparison.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +26,15 @@ import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.service.ImageService;
 
 @RestController
+@CrossOrigin(origins = "*") 
 @RequestMapping("/image")
 public class ImageController {
 
 	@Autowired
 	private ImageService service;
-
+	// consertando o erro de cors que a aplicação estava dando
+	// pelo que eu entendi o cors regular quem acessa o backend
+  
 	// inserir imagem no banco de dados
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
@@ -93,6 +99,8 @@ public class ImageController {
 	@PostMapping("/compareTwoImages")
 	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1,
 			@RequestParam("image2") MultipartFile file2) throws IOException {
+		
+		Map<String, String> data = new HashMap<>();
 
 		if (service.isValidImageFile(file1) && service.isValidImageFile(file2)) {
 
@@ -108,12 +116,17 @@ public class ImageController {
 
 			double similarityScore = hash0.normalizedHammingDistance(hash1);
 
-			if (similarityScore < .4) {
-				return ResponseEntity.status(HttpStatus.OK)
-						.body("São similares! " + "Score de similaridade = " + df.format(similarityScore));
+			if (similarityScore == 0) {
+				data.put("score", "São iguais! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+			} else if (similarityScore < .4) {
+				data.put("score", "São similares! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+
 			} else {
-				return ResponseEntity.status(HttpStatus.OK)
-						.body("São diferentes! " + "Score de similaridade = " + df.format(similarityScore));
+				data.put("score", "São diferentes! " + "Score de similaridade = " + df.format(similarityScore));
+				return new ResponseEntity<>(data, HttpStatus.OK);
+
 			}
 
 		} else {
