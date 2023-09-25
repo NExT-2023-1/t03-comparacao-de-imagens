@@ -1,10 +1,6 @@
 package next.finalproject.t03.imagecomparison.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,22 +15,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
-import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
-import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
+import next.finalproject.t03.imagecomparison.dto.CompareTwoImageResponse;
 import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.service.ImageService;
 
 @RestController
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 @RequestMapping("/image")
 public class ImageController {
 
 	@Autowired
 	private ImageService service;
-	// consertando o erro de cors que a aplicação estava dando
-	// pelo que eu entendi o cors regular quem acessa o backend
-  
+
 	// inserir imagem no banco de dados
 	@PostMapping
 	public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
@@ -99,38 +91,13 @@ public class ImageController {
 	@PostMapping("/compareTwoImages")
 	public ResponseEntity<?> getSimilarity(@RequestParam("image1") MultipartFile file1,
 			@RequestParam("image2") MultipartFile file2) throws IOException {
-		
-		Map<String, String> data = new HashMap<>();
 
-		if (service.isValidImageFile(file1) && service.isValidImageFile(file2)) {
+		CompareTwoImageResponse response = service.compreTwoImages(file1, file2);
 
-			HashingAlgorithm hasher = new PerceptiveHash(32);
-			// classe formata o valor de similaridade
-			java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
-
-			File firsImage = service.convertMultiPartToFile(file1);
-			File secondImage = service.convertMultiPartToFile(file2);
-
-			Hash hash0 = hasher.hash(firsImage);
-			Hash hash1 = hasher.hash(secondImage);
-
-			double similarityScore = hash0.normalizedHammingDistance(hash1);
-
-			if (similarityScore == 0) {
-				data.put("score", "São iguais! " + "Score de similaridade = " + df.format(similarityScore));
-				return new ResponseEntity<>(data, HttpStatus.OK);
-			} else if (similarityScore < .4) {
-				data.put("score", "São similares! " + "Score de similaridade = " + df.format(similarityScore));
-				return new ResponseEntity<>(data, HttpStatus.OK);
-
-			} else {
-				data.put("score", "São diferentes! " + "Score de similaridade = " + df.format(similarityScore));
-				return new ResponseEntity<>(data, HttpStatus.OK);
-
-			}
-
+		if (response.getIsValidImage()) {
+			return new ResponseEntity<>(response.getResponseMessage(), HttpStatus.OK);
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipo de imagem invalida! ");
+			return new ResponseEntity<>(response.getResponseMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 }

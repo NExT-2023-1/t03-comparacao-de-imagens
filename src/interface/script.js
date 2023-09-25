@@ -48,9 +48,8 @@ async function compareImages() {
             },
             body: formData
         })
-        
         const response = await data.json()
-        alert(response.score)
+        alert('Resposta: ' + response.responseMessage + ' Score de similaridade: ' + response.score)
     } catch (error) {
         console.log("Erro", error)
     }
