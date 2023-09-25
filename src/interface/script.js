@@ -41,16 +41,15 @@ async function compareImages() {
     formData.append("image2", imageInput2.files[0])
 
     try {
-    const data = await fetch("http://localhost:8080/image/comapretwoimages", {
+    const data = await fetch("http://localhost:8080/image/compareTwoImages", {
             method: "POST",
             headers: {
                 'Access-Control-Allow-Origin': "http://127.0.0.1:5500/",
             },
             body: formData
         })
-        
         const response = await data.json()
-        alert(response.score)
+        alert('Resposta: ' + response.responseMessage + ' Score de similaridade: ' + response.score)
     } catch (error) {
         console.log("Erro", error)
     }

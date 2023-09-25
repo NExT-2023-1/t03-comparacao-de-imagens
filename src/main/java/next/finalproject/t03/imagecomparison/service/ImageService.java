@@ -3,16 +3,21 @@ package next.finalproject.t03.imagecomparison.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import dev.brachtendorf.jimagehash.hash.Hash;
 import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
 import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
+import next.finalproject.t03.imagecomparison.dto.CompareTwoImageResponse;
 import next.finalproject.t03.imagecomparison.dto.MostSimilarImageResponse;
 import next.finalproject.t03.imagecomparison.entity.ImageData;
 import next.finalproject.t03.imagecomparison.repository.ImageDataRepository;
@@ -76,7 +81,7 @@ public class ImageService {
 
         // variavel com o valor maximo de similaridade dos hashs
         double lowSimilarityScore = 1;
-        
+
         // classe formata o valor de similaridade
         java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
         // df.format(lowSimilarityScore);
@@ -155,6 +160,65 @@ public class ImageService {
         String extensionSub = extension.substring(extension.lastIndexOf(".") + 1);
         return "jpeg".equalsIgnoreCase(extensionSub) || "jpg".equalsIgnoreCase(extensionSub);
 
+    }
+
+    public CompareTwoImageResponse compreTwoImages(MultipartFile image1, MultipartFile image2) {
+
+        try {
+
+            Map<String, String> data = new HashMap<>();
+
+            if (this.isValidImageFile(image1) && this.isValidImageFile(image2)) {
+
+                HashingAlgorithm hasher = new PerceptiveHash(32);
+                // classe formata o valor de similaridade
+                java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
+
+                File firsImage = this.convertMultiPartToFile(image1);
+                File secondImage = this.convertMultiPartToFile(image2);
+
+                Hash hash0 = hasher.hash(firsImage);
+                Hash hash1 = hasher.hash(secondImage);
+
+                double similarityScore = hash0.normalizedHammingDistance(hash1);
+
+                if (similarityScore == 0) {
+                    data.put("responseMessage", "As imagens são iguais! ");
+                    data.put("score", df.format(similarityScore));
+
+                } else if (similarityScore < .4) {
+                    data.put("responseMessage", "As imagens similares! ");
+                    data.put("score", df.format(similarityScore));
+
+                } else {
+                    data.put("responseMessage", "As imagens são diferentes! ");
+                    data.put("score", df.format(similarityScore));
+                }
+
+                return CompareTwoImageResponse.builder()
+                        .responseMessage(data)
+                        .isValidImage(true)
+                        .build();
+
+            } else {
+                data.put("response", "Tipo de imagem invalida! ");
+
+                return CompareTwoImageResponse.builder()
+                        .responseMessage(data)
+                        .isValidImage(false)
+                        .build();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            Map<String, String> dataError = new HashMap<>();
+            dataError.put("responseMessage", "Erro de entrada e saida");
+
+            return CompareTwoImageResponse.builder()
+                    .responseMessage(dataError)
+                    .isValidImage(false)
+                    .build();
+        }
     }
 
 }
