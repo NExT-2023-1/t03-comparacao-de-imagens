@@ -2,8 +2,9 @@
 
 
 #
-![Imagem ilustrativa](https://th.bing.com/th/id/R.1449fc3011842d6613ee814cfc1bdf26?rik=byXOiNeKerhyKQ&riu=http%3a%2f%2fimages.clipartpanda.com%2fcomparison-clipart-compare-468.jpg&ehk=Hg61tfjP33K%2fi%2f%2b%2bwV6mjUQ7z3V4TpAZLxVt1aBx9zI%3d&risl=&pid=ImgRaw&r=0)
-
+<div align="center">
+<img src="https://th.bing.com/th/id/R.1449fc3011842d6613ee814cfc1bdf26?rik=byXOiNeKerhyKQ&riu=http%3a%2f%2fimages.clipartpanda.com%2fcomparison-clipart-compare-468.jpg&ehk=Hg61tfjP33K%2fi%2f%2b%2bwV6mjUQ7z3V4TpAZLxVt1aBx9zI%3d&risl=&pid=ImgRaw&r=0" width="400px"> 
+</div>
 ## Descrição
 Este projeto utiliza o framework Spring Boot e a linguagem Java para realizar a comparação de imagens. O objetivo é fornecer um serviço que realize a comparação de imagens em uma base de imagens e que identifique similaridade entre elas. Este serviço será útil para a realização de auditoria de imagens fornecidas como prova de execução de um serviço de reparo em equipamentos.
 
