@@ -50,9 +50,9 @@ public class ImageController {
 	@DeleteMapping("/{longId}")
 	public ResponseEntity<?> deleteImage(@PathVariable Long longId) {
 		if (service.deleteImage(longId)) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.OK).body("Imagems removida com sucesso! ");
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Imagem não está no banco de dados! ");
 	}
 
 	// inserir imagem para comparar com as imagens salvas no banco de dados
